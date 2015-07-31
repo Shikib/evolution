@@ -62,9 +62,7 @@ class Sprite(pygame.sprite.Sprite):
   def tick_position(self):
     angle = math.radians(self.direction)
     velocity = (MOVSPEED*math.cos(angle), -MOVSPEED*math.sin(angle))
-    print((sprite.rect.left, sprite.rect.top))
-    sprite.rect.left, sprite.rect.top = tuple(map(sum, zip((sprite.rect.left, sprite.rect.top), velocity)))
-    print((sprite.rect.left, sprite.rect.top))
+    self.rect.left, self.rect.top = tuple(map(sum, zip((self.rect.left, self.rect.top), velocity)))
 
   # tick sprite 
   def tick(self):
@@ -75,29 +73,38 @@ class Sprite(pygame.sprite.Sprite):
 
   # rotate sprite image
   def rotate_img(self):
-    img = pygame.transform.rotate(sprite.image, sprite.direction)
-    sprite.rect = img.get_rect(center=sprite.rect.center)
+    img = pygame.transform.rotate(self.image, self.direction)
+    self.rect = img.get_rect(center=self.rect.center)
     return img
 
-sprite = Sprite('assets/inmate0.png', [200, 200])
+  def draw(self):
+    img = self.rotate_img()
+    screen.blit(img, self.rect)
+  
+
+robber = Sprite('assets/inmate0.png', [200, 200])
+police = Sprite('assets/police0.png', [300, 300])
 
 while True:
   # event handling
   for event in pygame.event.get():
     if event.type == pygame.KEYDOWN:
-      sprite.spinning = False
+      robber.spinning = False
+      police.spinning = False
     elif event.type == pygame.KEYUP:
-      sprite.spinning = True
+      robber.spinning = True
+      police.spinning = True
     elif event.type == QUIT:
       pygame.quit()
       sys.exit()
 
   # updating
-  sprite.tick()
+  robber.tick()
+  police.tick()
  
   # drawing
   screen.fill(WHITE)
   screen.blit(BackGround.image, BackGround.rect)
-  img = sprite.rotate_img()
-  screen.blit(img, sprite.rect)
+  robber.draw()
+  police.draw()
   pygame.display.update()
