@@ -73,6 +73,12 @@ class Sprite(pygame.sprite.Sprite):
     else:
       self.tick_position()
 
+  # rotate sprite image
+  def rotate_img(self):
+    img = pygame.transform.rotate(sprite.image, sprite.direction)
+    sprite.rect = img.get_rect(center=sprite.rect.center)
+    return img
+
 sprite = Sprite('assets/inmate0.png', [200, 200])
 
 while True:
@@ -92,6 +98,6 @@ while True:
   # drawing
   screen.fill(WHITE)
   screen.blit(BackGround.image, BackGround.rect)
-  img = pygame.transform.rotate(sprite.image, sprite.direction)
+  img = sprite.rotate_img()
   screen.blit(img, sprite.rect)
   pygame.display.update()
