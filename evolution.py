@@ -1,5 +1,6 @@
 import pygame, sys, math
 from pygame.locals import *
+from random import randint
 
 pygame.init()
 
@@ -11,6 +12,11 @@ HEIGHT = 720
 ROTSPEED = 1
 ROTDIR = 1 # CCW
 MOVSPEED = 20
+
+LEFTPOS = (200, 200)
+LEFTANG = 0
+RIGHTPOS = (600, 200)
+RIGHTANG = 180
 
 # set up window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -45,13 +51,25 @@ BackGround = Background('assets/background3.png', [0, 0])
 
 # Sprite initialization
 class Sprite(pygame.sprite.Sprite):
-  def __init__(self, image_file, location):
+  # image_file refers to the image for the sprite
+  # side is true if sprite is on the left, false if on the right
+  # cop is true if sprite is cop, false if robber
+  def __init__(self, image_file, side, cop):
     pygame.sprite.Sprite.__init__(self) # sprite initializer
-    self.direction = 0 # direction sprite is facing (in degrees)
     self.spinning = True # if false, then must be moving
+    self.cop = cop
     self.image = pygame.image.load(image_file)
     self.rect = self.image.get_rect()
-    self.rect.left, self.rect.top = location
+    self.init_position(side)
+
+  # initialize sprite position (left/right)
+  def init_position(self, side):
+    if (side):
+      self.rect.left, self.rect.top = LEFTPOS
+      self.direction = LEFTANG
+    else:
+      self.rect.left, self.rect.top = RIGHTPOS
+      self.direction = RIGHTANG
 
   # tick the direction
   def tick_direction(self):
@@ -82,8 +100,9 @@ class Sprite(pygame.sprite.Sprite):
     screen.blit(img, self.rect)
   
 
-robber = Sprite('assets/inmate0.png', [200, 200])
-police = Sprite('assets/police0.png', [300, 300])
+pos = randint(0, 1)
+robber = Sprite('assets/inmate0.png', pos, False)
+police = Sprite('assets/police0.png', not pos, True)
 
 while True:
   # event handling
