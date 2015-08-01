@@ -12,6 +12,7 @@ HEIGHT = 720
 ROTSPEED = 1
 ROTDIR = 1 # CCW
 MOVSPEED = 20
+RADIUS = 40
 
 LEFTPOS = (200, 200)
 LEFTANG = 0
@@ -99,6 +100,12 @@ class Sprite(pygame.sprite.Sprite):
     img = self.rotate_img()
     screen.blit(img, self.rect)
   
+# p and q represent two sprites
+def check_collision(p, q):
+  dx = q.rect.center[0] - p.rect.center[0]
+  dy = q.rect.center[1] - p.rect.center[1]
+  if (dx**2 + dy**2)**0.5 <= 2*RADIUS:
+    print("collision")
 
 pos = randint(0, 1)
 robber = Sprite('assets/inmate0.png', pos, False)
@@ -120,7 +127,8 @@ while True:
   # updating
   robber.tick()
   police.tick()
- 
+  check_collision(robber, police)
+
   # drawing
   screen.fill(WHITE)
   screen.blit(BackGround.image, BackGround.rect)
