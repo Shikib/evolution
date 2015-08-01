@@ -11,13 +11,21 @@ HEIGHT = 720
 # set up game constants
 ROTSPEED = 1
 ROTDIR = 1 # CCW
-MOVSPEED = 20
+MOVSPEED = 5
 RADIUS = 40
 
 LEFTPOS = (200, 200)
 LEFTANG = 0
 RIGHTPOS = (600, 200)
 RIGHTANG = 180
+
+# set up FPS
+FPS = 60
+fpsClock = pygame.time.Clock()
+
+# set up drawing constants
+WALKTIME = FPS / 3
+NOARMSTIME = 6
 
 # set up window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -52,15 +60,23 @@ BackGround = Background('assets/background3.png', [0, 0])
 
 # Sprite initialization
 class Sprite(pygame.sprite.Sprite):
-  # image_file refers to the image for the sprite
+  # image_file refers to the image for the sprite,
+  # image_walk1 refers to walking image 1 
+  # image_walk2 refers to walking image 2
   # side is true if sprite is on the left, false if on the right
   # cop is true if sprite is cop, false if robber
-  def __init__(self, image_file, side, cop):
+  def __init__(self, image_file, image_walk1, image_walk2, side, cop):
     pygame.sprite.Sprite.__init__(self) # sprite initializer
+    # game fields
     self.spinning = True # if false, then must be moving
     self.cop = cop
+    self.score = 0
+    # drawing fields
     self.image = pygame.image.load(image_file)
+    self.walkimg = pygame.image.load(image_walk1)
+    self.walkimg2 = pygame.image.load(image_walk2)
     self.rect = self.image.get_rect()
+    self.walkit = 0 # walk iteration
     self.init_position(side)
 
   # initialize sprite position (left/right)
@@ -83,21 +99,34 @@ class Sprite(pygame.sprite.Sprite):
     velocity = (MOVSPEED*math.cos(angle), -MOVSPEED*math.sin(angle))
     self.rect.left, self.rect.top = tuple(map(sum, zip((self.rect.left, self.rect.top), velocity)))
 
+  # tick walk iteration (used in drawing):
+  def tick_walkit(self):
+    self.walkit = (self.walkit + 1) % WALKTIME 
+
   # tick sprite 
   def tick(self):
     if self.spinning:
       self.tick_direction()
     else:
       self.tick_position()
+    self.tick_walkit() 
 
   # rotate sprite image
-  def rotate_img(self):
-    img = pygame.transform.rotate(self.image, self.direction)
+  def rotate_img(self, img):
+    img = pygame.transform.rotate(img, self.direction)
     self.rect = img.get_rect(center=self.rect.center)
     return img
 
   def draw(self):
-    img = self.rotate_img()
+    if self.spinning:
+      img = self.rotate_img(self.image)
+    elif self.walkit < WALKTIME / 2 - NOARMSTIME / 2:
+      img = self.rotate_img(self.walkimg)
+    elif self.walkit < WALKTIME / 2 + NOARMSTIME / 2:
+      img = self.rotate_img(self.image)
+    else:
+      img = self.rotate_img(self.walkimg2)
+
     screen.blit(img, self.rect)
   
 # p and q represent two sprites
@@ -108,8 +137,8 @@ def check_collision(p, q):
     print("collision")
 
 pos = randint(0, 1)
-robber = Sprite('assets/inmate0.png', pos, False)
-police = Sprite('assets/police0.png', not pos, True)
+robber = Sprite('assets/inmate0.png', 'assets/inmate1.png', 'assets/inmate2.png', pos, False)
+police = Sprite('assets/police0.png', 'assets/police1.png', 'assets/police2.png', not pos, True)
 
 while True:
   # event handling
@@ -134,4 +163,6 @@ while True:
   screen.blit(BackGround.image, BackGround.rect)
   robber.draw()
   police.draw()
+
   pygame.display.update()
+  fpsClock.tick(FPS)
