@@ -129,13 +129,21 @@ class Sprite(pygame.sprite.Sprite):
 
     screen.blit(img, self.rect)
   
-# p and q represent two sprites
-def check_collision(p, q):
-  dx = q.rect.center[0] - p.rect.center[0]
-  dy = q.rect.center[1] - p.rect.center[1]
-  if (dx**2 + dy**2)**0.5 <= 2*RADIUS:
-    print("collision")
+# check collision between police and robber
+def check_collision():
+  dx = police.rect.center[0] - robber.rect.center[0]
+  dy = police.rect.center[1] - robber.rect.center[1]
+  return (dx**2 + dy**2)**0.5 <= 2*RADIUS
 
+
+# handle collision
+def handle_collision():
+  pos = randint(0, 1)
+  robber.init_position(pos)
+  police.init_position(not pos)
+
+
+# init game
 pos = randint(0, 1)
 robber = Sprite('assets/inmate0.png', 'assets/inmate1.png', 'assets/inmate2.png', pos, False)
 police = Sprite('assets/police0.png', 'assets/police1.png', 'assets/police2.png', not pos, True)
@@ -156,7 +164,8 @@ while True:
   # updating
   robber.tick()
   police.tick()
-  check_collision(robber, police)
+  if (check_collision()):
+    handle_collision()
 
   # drawing
   screen.fill(WHITE)
