@@ -12,12 +12,18 @@ HEIGHT = 720
 ROTSPEED = 1
 ROTDIR = 1 # CCW
 MOVSPEED = 5
-RADIUS = 40
+RADIUS = 30
 
 LEFTPOS = (200, 200)
 LEFTANG = 0
 RIGHTPOS = (600, 200)
 RIGHTANG = 180
+
+# set up board boundaries
+LEFTBOUND = 0
+RIGHTBOUND = 900
+UPBOUND = 0
+DOWNBOUND = 400
 
 # set up FPS
 FPS = 60
@@ -88,6 +94,20 @@ class Sprite(pygame.sprite.Sprite):
       self.rect.left, self.rect.top = RIGHTPOS
       self.direction = RIGHTANG
 
+  # correct the position in case that sprite is out of bounds
+  def correct_position(self):
+    print(police.rect.bottom)
+    print(police.rect.right)
+    if self.rect.left < LEFTBOUND:
+      self.rect.left = LEFTBOUND
+    if self.rect.right > RIGHTBOUND:
+      self.rect.right = RIGHTBOUND
+    if self.rect.top < UPBOUND:
+      self.rect.top = UPBOUND
+    if self.rect.bottom > DOWNBOUND:
+      self.rect.bottom = DOWNBOUND
+
+
   # tick the direction
   def tick_direction(self):
     self.direction = (self.direction +  ROTDIR * ROTSPEED) % 360 
@@ -98,6 +118,7 @@ class Sprite(pygame.sprite.Sprite):
     angle = math.radians(self.direction)
     velocity = (MOVSPEED*math.cos(angle), -MOVSPEED*math.sin(angle))
     self.rect.left, self.rect.top = tuple(map(sum, zip((self.rect.left, self.rect.top), velocity)))
+    self.correct_position() 
 
   # tick walk iteration (used in drawing):
   def tick_walkit(self):
@@ -136,7 +157,7 @@ def check_collision():
   return (dx**2 + dy**2)**0.5 <= 2*RADIUS
 
 
-# handle collision
+# handle collision by resetting to initial positions
 def handle_collision():
   pos = randint(0, 1)
   robber.init_position(pos)
@@ -164,6 +185,8 @@ while True:
   # updating
   robber.tick()
   police.tick()
+
+  # check for collision
   if (check_collision()):
     handle_collision()
 
