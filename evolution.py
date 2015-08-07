@@ -9,9 +9,9 @@ WIDTH = 1280
 HEIGHT = 720
 
 # set up game constants
-ROTSPEED = 1
+ROTSPEED = 2
 ROTDIR = 1 # CCW
-MOVSPEED = 5
+MOVSPEED = 10
 RADIUS = 30
 
 LEFTPOS = (200, 200)
@@ -20,13 +20,13 @@ RIGHTPOS = (600, 200)
 RIGHTANG = 180
 
 # set up board boundaries
-LEFTBOUND = 0
-RIGHTBOUND = 900
-UPBOUND = 0
-DOWNBOUND = 400
+LEFTBOUND = 30
+RIGHTBOUND = 1240
+UPBOUND = 30
+DOWNBOUND = 560
 
 # set up FPS
-FPS = 60
+FPS = 45
 fpsClock = pygame.time.Clock()
 
 # set up drawing constants
@@ -52,17 +52,8 @@ class Background(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.rect.left, self.rect.top = location
 
-BackGround = Background('assets/background3.png', [0, 0])
+BackGround = Background('assets/board3.png', [0, 0])
 
-# Background initialization
-class Background(pygame.sprite.Sprite):
-  def __init__(self, image_file, location):
-    pygame.sprite.Sprite.__init__(self) # sprite initializer
-    self.image = pygame.image.load(image_file)
-    self.rect = self.image.get_rect()
-    self.rect.left, self.rect.top = location
-
-BackGround = Background('assets/background3.png', [0, 0])
 
 # Sprite initialization
 class Sprite(pygame.sprite.Sprite):
@@ -96,8 +87,8 @@ class Sprite(pygame.sprite.Sprite):
 
   # correct the position in case that sprite is out of bounds
   def correct_position(self):
-    print(police.rect.bottom)
-    print(police.rect.right)
+    print(police.rect.left)
+    print(police.rect.top)
     if self.rect.left < LEFTBOUND:
       self.rect.left = LEFTBOUND
     if self.rect.right > RIGHTBOUND:
