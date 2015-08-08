@@ -42,7 +42,7 @@ pygame.display.set_caption('evolution')
 # set up font
 FONTSIZE = 60
 clock_font = pygame.font.SysFont("calibri", 2*FONTSIZE)
-score_font = pygame.font.SysFont("calibri", FONTSIZE)
+score_font = pygame.font.SysFont("calibri", 3*FONTSIZE // 2)
 
 # set up colours
 BLACK = (0, 0, 0)
@@ -94,8 +94,6 @@ class Sprite(pygame.sprite.Sprite):
 
   # correct the position in case that sprite is out of bounds
   def correct_position(self):
-    print(police.rect.left)
-    print(police.rect.top)
     if self.rect.left < LEFTBOUND:
       self.rect.left = LEFTBOUND
     if self.rect.right > RIGHTBOUND:
@@ -174,8 +172,15 @@ def draw_time():
   screen.blit(time, time_rect)
 
 def draw_score():
-  score = score_font.render("0", 1, BLACK)
-  screen.blit(score, (450, 600))
+  rscore = score_font.render(str(robber.score), 1, WHITE)
+  rscore_rect = rscore.get_rect()
+  rscore_rect.center = (420, 650)
+  screen.blit(rscore, rscore_rect)
+
+  pscore = score_font.render(str(police.score), 1, WHITE)
+  pscore_rect = pscore.get_rect()
+  pscore_rect.center = (860, 650)
+  screen.blit(pscore, pscore_rect)
 
 
 # init game
@@ -214,10 +219,11 @@ while True:
   screen.fill(WHITE)
   screen.blit(BackGround.image, BackGround.rect)
 
-
+  # draw score and time
   draw_time()
   draw_score()
 
+  # draw sprites
   robber.draw()
   police.draw()
 
