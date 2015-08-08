@@ -146,19 +146,31 @@ class Sprite(pygame.sprite.Sprite):
 
     screen.blit(img, self.rect)
   
+# reset sprite positions
+def reset_positions():
+  pos = randint(0, 1)
+  robber.init_position(pos)
+  police.init_position(not pos)
+
 # check collision between police and robber
 def check_collision():
   dx = police.rect.center[0] - robber.rect.center[0]
   dy = police.rect.center[1] - robber.rect.center[1]
   return (dx**2 + dy**2)**0.5 <= 2*RADIUS
 
-
 # handle collision by resetting to initial positions
 def handle_collision():
-  pos = randint(0, 1)
-  robber.init_position(pos)
-  police.init_position(not pos)
+  reset_positions()
   police.score += 1
+
+# check whether round time is 0
+def check_round_over():
+  return get_time() == 0
+
+# handle time over
+def handle_round_over():
+  reset_positions()
+  robber.score += 1
 
 # get the seconds left in this round
 def get_time():
@@ -212,8 +224,12 @@ while True:
   police.tick()
 
   # check for collision
-  if (check_collision()):
+  if check_collision():
     handle_collision()
+
+  # check for round over
+  if check_round_over():
+    handle_round_over() 
 
   # drawing
   screen.fill(WHITE)
