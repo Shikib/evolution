@@ -9,7 +9,7 @@ WIDTH = 1280
 HEIGHT = 720
 
 # set up game constantsi
-ROUNDTIME = 30
+ROUNDTIME = 10
 
 ROTSPEED = 2
 ROTDIR = 1 # CCW
@@ -146,8 +146,11 @@ class Sprite(pygame.sprite.Sprite):
 
     screen.blit(img, self.rect)
   
-# reset sprite positions
-def reset_positions():
+# reset sprite positions and time
+def reset_round():
+  global time
+  time = ROUNDTIME
+
   pos = randint(0, 1)
   robber.init_position(pos)
   police.init_position(not pos)
@@ -160,7 +163,7 @@ def check_collision():
 
 # handle collision by resetting to initial positions
 def handle_collision():
-  reset_positions()
+  reset_round()
   police.score += 1
 
 # check whether round time is 0
@@ -169,7 +172,7 @@ def check_round_over():
 
 # handle time over
 def handle_round_over():
-  reset_positions()
+  reset_round()
   robber.score += 1
 
 # get the seconds left in this round
