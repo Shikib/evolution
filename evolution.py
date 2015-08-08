@@ -213,11 +213,15 @@ while True:
     if event.type == USEREVENT+1:
       time -= 1
     elif event.type == pygame.KEYDOWN:
-      robber.spinning = False
-      police.spinning = False
+      if event.key == K_w:
+        robber.spinning = False
+      elif event.key == K_UP:
+        police.spinning = False
     elif event.type == pygame.KEYUP:
-      robber.spinning = True
-      police.spinning = True
+      if event.key == K_w:  
+        robber.spinning = True
+      elif event.key == K_UP:
+        police.spinning = True
     elif event.type == QUIT:
       pygame.quit()
       sys.exit()
