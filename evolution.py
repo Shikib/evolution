@@ -8,7 +8,9 @@ pygame.init()
 WIDTH = 1280
 HEIGHT = 720
 
-# set up game constants
+# set up game constantsi
+ROUNDTIME = 30
+
 ROTSPEED = 2
 ROTDIR = 1 # CCW
 MOVSPEED = 10
@@ -36,6 +38,11 @@ NOARMSTIME = 6
 # set up window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('evolution')
+
+# set up font
+FONTSIZE = 60
+clock_font = pygame.font.SysFont("calibri", 2*FONTSIZE)
+score_font = pygame.font.SysFont("calibri", FONTSIZE)
 
 # set up colours
 BLACK = (0, 0, 0)
@@ -153,6 +160,22 @@ def handle_collision():
   pos = randint(0, 1)
   robber.init_position(pos)
   police.init_position(not pos)
+  police.score += 1
+
+# get the seconds left in this round
+def get_time():
+  return time
+
+# draw the time in appropriate position
+def draw_time():
+  time = clock_font.render(str(get_time()), 1, WHITE)
+  time_rect = time.get_rect()
+  time_rect.center = (640, 650)
+  screen.blit(time, time_rect)
+
+def draw_score():
+  score = score_font.render("0", 1, BLACK)
+  screen.blit(score, (450, 600))
 
 
 # init game
@@ -160,10 +183,16 @@ pos = randint(0, 1)
 robber = Sprite('assets/inmate0.png', 'assets/inmate1.png', 'assets/inmate2.png', pos, False)
 police = Sprite('assets/police0.png', 'assets/police1.png', 'assets/police2.png', not pos, True)
 
+# init time
+time = ROUNDTIME
+pygame.time.set_timer(USEREVENT+1, 1000)
+
 while True:
   # event handling
   for event in pygame.event.get():
-    if event.type == pygame.KEYDOWN:
+    if event.type == USEREVENT+1:
+      time -= 1
+    elif event.type == pygame.KEYDOWN:
       robber.spinning = False
       police.spinning = False
     elif event.type == pygame.KEYUP:
@@ -184,6 +213,11 @@ while True:
   # drawing
   screen.fill(WHITE)
   screen.blit(BackGround.image, BackGround.rect)
+
+
+  draw_time()
+  draw_score()
+
   robber.draw()
   police.draw()
 
