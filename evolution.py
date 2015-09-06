@@ -208,11 +208,37 @@ pygame.time.set_timer(USEREVENT+1, 1000)
 
 # ---- Genetic Algorithm Code ----
 
+# pool of species (to avoid staleness)
+class Pool:
+  def __init__(self):
+    self.species = []
+    self.generation = 0
+    self.maxFitness = 0
+
+class Species:
+  def __init__(self):
+    self.genomes = []
+    self.top_fitness = 0
+    self.average_fitness = 0
+
+# instance of a species
+class Genome:
+  def __init__(self):
+    self.genes = []
+    self.network = []
+    self.fitness = 0
+
 class Neuron:
   def __init__(self):
     self.incoming_genes = []
     self.value = 0.0    
 
+class Gene:
+  def __init__(self):
+    self.into_neuron_index = 0
+    self.out_neuron_index = 0
+    self.weight = 0.0
+    self.enabled = True
 
 
 while True:
