@@ -9,7 +9,7 @@ WIDTH = 1280
 HEIGHT = 720
 
 # set up game constantsi
-ROUNDTIME = 10
+ROUNDTIME = 30
 
 ROTSPEED = 2
 ROTDIR = 1 # CCW
@@ -25,8 +25,7 @@ RIGHTANG = 180
 LEFTBOUND = 30
 RIGHTBOUND = 1240
 UPBOUND = 30
-DOWNBOUND = 560
-
+DOWNBOUND = 560 
 # set up FPS
 FPS = 45
 fpsClock = pygame.time.Clock()
@@ -206,6 +205,15 @@ police = Sprite('assets/police0.png', 'assets/police1.png', 'assets/police2.png'
 # init time
 time = ROUNDTIME
 pygame.time.set_timer(USEREVENT+1, 1000)
+
+# ---- Genetic Algorithm Code ----
+
+class Neuron:
+  def __init__(self):
+    self.incoming_genes = []
+    self.value = 0.0    
+
+
 
 while True:
   # event handling
