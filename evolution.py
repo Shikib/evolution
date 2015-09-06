@@ -213,13 +213,27 @@ class Pool:
   def __init__(self):
     self.species = []
     self.generation = 0
-    self.maxFitness = 0
+    self.max_fitness = 0 
+
+  def calc_max_fitness(self):
+    self.max_fitness = max(map(lambda species: species.calc_top_fitness(), self.species))
+    return self.max_fitness
+
 
 class Species:
   def __init__(self):
     self.genomes = []
     self.top_fitness = 0
     self.average_fitness = 0
+ 
+  def calc_top_fitness(self):
+    self.top_fitness = max(map(lambda genome: genome.fitness, self.genomes))
+    return self.top_fitness
+
+  def calc_average_fitness(self):
+    self.average_fitness = reduce(lambda acc_sum, genome: acc_sum + genome.fitness, self.genomes) // len(self.genomes)
+    return self.average_fitness
+
 
 # instance of a species
 class Genome:
